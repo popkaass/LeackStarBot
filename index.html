@@ -1,0 +1,1933 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leak Star - Зарабатывайте звёзды в Telegram</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FFD700;
+            --primary-dark: #E6C200;
+            --dark: #0A0A0F;
+            --dark-light: #1A1A24;
+            --text: #F5F5F7;
+            --text-secondary: #86868B;
+            --card-bg: rgba(25, 25, 35, 0.8);
+            --success: #30D158;
+            --danger: #FF453A;
+            --warning: #FF9F0A;
+            --gradient: linear-gradient(135deg, #FFD700 0%, #FFAA00 100%);
+            --shadow: 0 10px 30px rgba(255, 215, 0, 0.15);
+            --apple-blur: backdrop-filter: blur(20px);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        
+        body {
+            background-color: var(--dark);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(255, 215, 0, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(255, 215, 0, 0.03) 0%, transparent 20%);
+        }
+        
+        /* Анимации Apple-стиль */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(255, 215, 0, 0.6); }
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* Стили для скроллбара */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--dark-light);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+        
+        /* Контейнеры */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Навигация */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 20px 0;
+            background: rgba(10, 10, 15, 0.8);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .logo i {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+        
+        .nav-link {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            position: relative;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary);
+        }
+        
+        .nav-link.active {
+            color: var(--primary);
+        }
+        
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--primary);
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            background: var(--card-bg);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .user-profile:hover {
+            transform: scale(1.05);
+        }
+        
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+        
+        .user-name {
+            font-weight: 500;
+        }
+        
+        /* Герой секция */
+        .hero {
+            padding: 160px 0 100px;
+            text-align: center;
+            animation: fadeIn 1s ease-out;
+        }
+        
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, #FFAA00 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1.1;
+        }
+        
+        .hero p {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+        }
+        
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 18px 36px;
+            background: var(--gradient);
+            color: var(--dark);
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            animation: glow 2s infinite;
+        }
+        
+        .cta-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 40px rgba(255, 215, 0, 0.4);
+        }
+        
+        /* Статистика */
+        .stats {
+            padding: 80px 0;
+            animation: fadeIn 1.2s ease-out;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+        
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            transition: transform 0.3s;
+            border: 1px solid rgba(255, 215, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(255, 215, 0, 0.3);
+        }
+        
+        .stat-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        .stat-number {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--primary) 0%, #FFAA00 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+        
+        /* Игры */
+        .games {
+            padding: 80px 0;
+            animation: fadeIn 1.4s ease-out;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 50px;
+            text-align: center;
+        }
+        
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+        
+        .game-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 215, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: var(--gradient);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .game-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(255, 215, 0, 0.3);
+        }
+        
+        .game-card:hover::before {
+            opacity: 1;
+        }
+        
+        .game-icon {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .game-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .game-description {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .play-button {
+            display: inline-block;
+            padding: 12px 24px;
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .play-button:hover {
+            background: var(--primary);
+            color: var(--dark);
+        }
+        
+        /* Модальные окна */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: var(--dark-light);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: fadeIn 0.5s ease-out;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .modal-close:hover {
+            color: var(--primary);
+        }
+        
+        .modal-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            text-align: center;
+            color: var(--primary);
+        }
+        
+        /* Формы */
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 10px;
+            color: var(--text);
+            font-weight: 500;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            color: var(--text);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 215, 0, 0.05);
+        }
+        
+        .form-button {
+            width: 100%;
+            padding: 18px;
+            background: var(--gradient);
+            color: var(--dark);
+            border: none;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        
+        .form-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 215, 0, 0.3);
+        }
+        
+        .form-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* Поиск профилей */
+        .profile-results {
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.02);
+        }
+        
+        .profile-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .profile-item:hover {
+            background: rgba(255, 215, 0, 0.05);
+        }
+        
+        .profile-item.selected {
+            background: rgba(255, 215, 0, 0.1);
+            border-left: 3px solid var(--primary);
+        }
+        
+        .profile-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+        
+        .profile-info {
+            flex: 1;
+        }
+        
+        .profile-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .profile-username {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .profile-check {
+            color: var(--success);
+            font-size: 1.2rem;
+        }
+        
+        /* Дашборд */
+        .dashboard {
+            padding: 140px 0 60px;
+            display: none;
+        }
+        
+        .dashboard.active {
+            display: block;
+        }
+        
+        .dashboard-header {
+            margin-bottom: 40px;
+        }
+        
+        .welcome-user {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .balance-card {
+            background: var(--gradient);
+            border-radius: 20px;
+            padding: 40px;
+            color: var(--dark);
+            margin-bottom: 40px;
+            animation: glow 3s infinite;
+        }
+        
+        .balance-label {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .balance-amount {
+            font-size: 3.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+        }
+        
+        .balance-star {
+            font-size: 2.5rem;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .dashboard-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 215, 0, 0.1);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .card-action {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .card-action:hover {
+            color: var(--primary-dark);
+        }
+        
+        .ref-link {
+            background: rgba(255, 215, 0, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 15px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .ref-link input {
+            flex: 1;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1rem;
+        }
+        
+        .ref-link input:focus {
+            outline: none;
+        }
+        
+        .copy-btn {
+            background: var(--primary);
+            color: var(--dark);
+            border: none;
+            border-radius: 10px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .copy-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .stats-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+        
+        .stat-value {
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        /* Игровой интерфейс */
+        .game-interface {
+            padding: 140px 0 60px;
+            display: none;
+            text-align: center;
+        }
+        
+        .game-interface.active {
+            display: block;
+        }
+        
+        .game-header {
+            margin-bottom: 40px;
+        }
+        
+        .bet-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+        
+        .bet-option {
+            background: var(--card-bg);
+            border: 2px solid rgba(255, 215, 0, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .bet-option:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+        }
+        
+        .bet-option.selected {
+            background: rgba(255, 215, 0, 0.1);
+            border-color: var(--primary);
+        }
+        
+        .bet-amount {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        
+        .bet-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .game-controls {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 40px;
+        }
+        
+        .game-btn {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .game-btn.primary {
+            background: var(--gradient);
+            color: var(--dark);
+        }
+        
+        .game-btn.secondary {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+        
+        .game-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 215, 0, 0.2);
+        }
+        
+        /* Результаты игры */
+        .game-result {
+            display: none;
+            margin-top: 40px;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .game-result.active {
+            display: block;
+        }
+        
+        .result-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        
+        .result-win {
+            color: var(--success);
+        }
+        
+        .result-lose {
+            color: var(--danger);
+        }
+        
+        .result-details {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .result-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        /* Футер */
+        .footer {
+            padding: 60px 0;
+            border-top: 1px solid rgba(255, 215, 0, 0.1);
+            margin-top: 80px;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .footer-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-link:hover {
+            color: var(--primary);
+        }
+        
+        .copyright {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .bet-selection {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        /* Утилиты */
+        .text-primary {
+            color: var(--primary);
+        }
+        
+        .text-success {
+            color: var(--success);
+        }
+        
+        .text-danger {
+            color: var(--danger);
+        }
+        
+        .mt-20 {
+            margin-top: 20px;
+        }
+        
+        .mb-20 {
+            margin-bottom: 20px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Навигация -->
+    <nav class="navbar">
+        <div class="container nav-content">
+            <a href="#" class="logo">
+                <i class="fas fa-star"></i>
+                Leak Star
+            </a>
+            <div class="nav-links">
+                <a href="#" class="nav-link active">Главная</a>
+                <a href="#games" class="nav-link">Игры</a>
+                <a href="#about" class="nav-link">О системе</a>
+                <div class="user-profile" id="userProfileBtn">
+                    <div class="user-avatar">?</div>
+                    <div class="user-name">Войти</div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Главная страница -->
+    <main class="main-content">
+        <!-- Герой секция -->
+        <section class="hero">
+            <div class="container">
+                <h1>Зарабатывайте звёзды <br>в Telegram</h1>
+                <p>Leak Star — революционная система заработка звёзд через приглашение друзей, игры и ежедневные бонусы. Присоединяйтесь к сообществу!</p>
+                <button class="cta-button" id="registerBtn">
+                    <i class="fas fa-rocket"></i>
+                    Начать зарабатывать
+                </button>
+            </div>
+        </section>
+
+        <!-- Статистика -->
+        <section class="stats">
+            <div class="container">
+                <h2 class="section-title">Статистика системы</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-number" id="totalUsers">12,847</div>
+                        <div class="stat-label">Активных пользователей</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="stat-number" id="totalStars">5.2M</div>
+                        <div class="stat-label">Выплачено звёзд</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-gamepad"></i>
+                        </div>
+                        <div class="stat-number" id="gamesPlayed">892K</div>
+                        <div class="stat-label">Сыграно игр</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-gift"></i>
+                        </div>
+                        <div class="stat-number" id="totalBonuses">2.1M</div>
+                        <div class="stat-label">Выдано бонусов</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Игры -->
+        <section class="games" id="games">
+            <div class="container">
+                <h2 class="section-title">Игровой центр</h2>
+                <div class="games-grid">
+                    <div class="game-card">
+                        <div class="game-icon">
+                            <i class="fas fa-slot-machine"></i>
+                        </div>
+                        <h3 class="game-title">Слоты</h3>
+                        <p class="game-description">Классические игровые автоматы с шансом выиграть х5 от ставки</p>
+                        <a href="#" class="play-button" data-game="slots">Играть</a>
+                    </div>
+                    <div class="game-card">
+                        <div class="game-icon">
+                            <i class="fas fa-dice"></i>
+                        </div>
+                        <h3 class="game-title">Кости</h3>
+                        <p class="game-description">Бросьте кости против системы и удвойте свою ставку</p>
+                        <a href="#" class="play-button" data-game="dice">Играть</a>
+                    </div>
+                    <div class="game-card">
+                        <div class="game-icon">
+                            <i class="fas fa-cards"></i>
+                        </div>
+                        <h3 class="game-title">Карты</h3>
+                        <p class="game-description">Угадайте цвет или значение следующей карты</p>
+                        <a href="#" class="play-button" data-game="cards">Играть</a>
+                    </div>
+                    <div class="game-card">
+                        <div class="game-icon">
+                            <i class="fas fa-basketball"></i>
+                        </div>
+                        <h3 class="game-title">Баскетбол</h3>
+                        <p class="game-description">Попадите мячом в корзину и заработайте звёзды</p>
+                        <a href="#" class="play-button" data-game="basketball">Играть</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Дашборд пользователя (скрыт до регистрации) -->
+        <section class="dashboard" id="dashboard">
+            <div class="container">
+                <div class="dashboard-header">
+                    <h1 class="welcome-user">Добро пожаловать, <span id="userDisplayName">Пользователь</span>!</h1>
+                    <p>Управляйте своим профилем, играйте и выводите звёзды</p>
+                </div>
+
+                <div class="balance-card">
+                    <div class="balance-label">Ваш баланс</div>
+                    <div class="balance-amount">
+                        <span id="userBalance">100</span>
+                        <i class="fas fa-star balance-star"></i>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Реферальная система</h3>
+                            <a href="#" class="card-action" id="refreshRef">Обновить</a>
+                        </div>
+                        <div class="ref-link">
+                            <input type="text" id="refLink" value="https://t.me/leakstarbot?start=ref_123456789" readonly>
+                            <button class="copy-btn" id="copyRefBtn">Копировать</button>
+                        </div>
+                        <div class="stats-list">
+                            <div class="stat-item">
+                                <span>Всего рефералов</span>
+                                <span class="stat-value" id="totalRefs">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Активных рефералов</span>
+                                <span class="stat-value" id="activeRefs">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Заработано с рефералов</span>
+                                <span class="stat-value" id="earnedFromRefs">0 ⭐</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Статистика</h3>
+                            <a href="#" class="card-action" id="refreshStats">Обновить</a>
+                        </div>
+                        <div class="stats-list">
+                            <div class="stat-item">
+                                <span>Дней в системе</span>
+                                <span class="stat-value" id="daysInSystem">1</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Сыграно игр</span>
+                                <span class="stat-value" id="userGamesPlayed">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Всего выигрыш</span>
+                                <span class="stat-value" id="totalWins">0 ⭐</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Уровень</span>
+                                <span class="stat-value" id="userLevel">1</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Быстрые действия</h3>
+                        </div>
+                        <div class="game-controls">
+                            <button class="game-btn secondary" id="dailyBonusBtn">🎁 Ежедневный бонус</button>
+                            <button class="game-btn primary" id="withdrawBtn">💸 Вывести звёзды</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Игровой интерфейс -->
+        <section class="game-interface" id="gameInterface">
+            <div class="container">
+                <div class="game-header">
+                    <h2 class="section-title" id="gameTitle">🎰 Слоты</h2>
+                    <p>Баланс: <span id="gameBalance">100</span> ⭐</p>
+                </div>
+
+                <div class="bet-selection" id="betSelection">
+                    <!-- Будет заполнено JavaScript -->
+                </div>
+
+                <div class="game-controls">
+                    <button class="game-btn primary" id="placeBetBtn">Сделать ставку</button>
+                    <button class="game-btn secondary" id="backToGamesBtn">← Назад к играм</button>
+                </div>
+
+                <div class="game-result" id="gameResult">
+                    <h3 class="result-title" id="resultTitle">Результат игры</h3>
+                    <div class="result-details">
+                        <div class="result-item">
+                            <span>Ставка:</span>
+                            <span id="resultBet">0 ⭐</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Результат:</span>
+                            <span id="resultAmount">0 ⭐</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Новый баланс:</span>
+                            <span id="resultNewBalance">100 ⭐</span>
+                        </div>
+                    </div>
+                    <div class="game-controls">
+                        <button class="game-btn primary" id="playAgainBtn">Играть еще раз</button>
+                        <button class="game-btn secondary" id="backToDashboardBtn">Вернуться в профиль</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Футер -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-links">
+                <a href="#" class="footer-link">Политика конфиденциальности</a>
+                <a href="#" class="footer-link">Условия использования</a>
+                <a href="#" class="footer-link">Поддержка</a>
+            </div>
+            <div class="copyright">
+                © 2024 Leak Star. Все права защищены.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Модальное окно регистрации -->
+    <div class="modal" id="registerModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeRegisterModal">&times;</button>
+            <h2 class="modal-title">Регистрация</h2>
+            
+            <div class="form-group">
+                <label class="form-label" for="usernameInput">Telegram Юзернейм</label>
+                <input type="text" class="form-input" id="usernameInput" placeholder="@username" autocomplete="off">
+                <div class="profile-results" id="profileResults">
+                    <!-- Результаты поиска профилей -->
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="phoneInput">Номер телефона</label>
+                <input type="tel" class="form-input" id="phoneInput" placeholder="+79123456789" autocomplete="off">
+            </div>
+            
+            <button class="form-button" id="submitRegisterBtn">Продолжить регистрацию</button>
+            
+            <p class="mt-20" style="text-align: center; color: var(--text-secondary); font-size: 0.9rem;">
+                Нажимая "Продолжить", вы соглашаетесь с условиями использования
+            </p>
+        </div>
+    </div>
+
+    <!-- Модальное окно входа -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeLoginModal">&times;</button>
+            <h2 class="modal-title">Вход в систему</h2>
+            
+            <div class="form-group">
+                <label class="form-label" for="loginPhone">Номер телефона</label>
+                <input type="tel" class="form-input" id="loginPhone" placeholder="+79123456789">
+            </div>
+            
+            <button class="form-button" id="submitLoginBtn">Получить код</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно подтверждения кода -->
+    <div class="modal" id="codeModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeCodeModal">&times;</button>
+            <h2 class="modal-title">Подтверждение</h2>
+            
+            <div class="form-group">
+                <label class="form-label">Введите код из Telegram</label>
+                <div style="display: flex; gap: 10px; justify-content: center; margin: 20px 0;">
+                    <input type="text" class="form-input" style="width: 50px; text-align: center; font-size: 1.5rem; padding: 15px;" maxlength="1" id="code1">
+                    <input type="text" class="form-input" style="width: 50px; text-align: center; font-size: 1.5rem; padding: 15px;" maxlength="1" id="code2">
+                    <input type="text" class="form-input" style="width: 50px; text-align: center; font-size: 1.5rem; padding: 15px;" maxlength="1" id="code3">
+                    <input type="text" class="form-input" style="width: 50px; text-align: center; font-size: 1.5rem; padding: 15px;" maxlength="1" id="code4">
+                    <input type="text" class="form-input" style="width: 50px; text-align: center; font-size: 1.5rem; padding: 15px;" maxlength="1" id="code5">
+                </div>
+            </div>
+            
+            <button class="form-button" id="submitCodeBtn">Подтвердить</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно вывода -->
+    <div class="modal" id="withdrawModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeWithdrawModal">&times;</button>
+            <h2 class="modal-title">Вывод звёзд</h2>
+            
+            <div class="form-group">
+                <label class="form-label">Ваш баланс: <span id="withdrawBalance">100</span> ⭐</label>
+                <input type="number" class="form-input" id="withdrawAmount" placeholder="Введите количество звёзд" min="100" max="10000">
+                <small style="color: var(--text-secondary); display: block; margin-top: 5px;">Минимум: 100 ⭐, Максимум: 10000 ⭐</small>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Юзернейм получателя</label>
+                <input type="text" class="form-input" id="withdrawUsername" placeholder="@username" value="" readonly>
+            </div>
+            
+            <button class="form-button" id="submitWithdrawBtn">Отправить заявку</button>
+        </div>
+    </div>
+
+    <script>
+        // Состояние приложения
+        const state = {
+            isAuthenticated: false,
+            user: null,
+            currentGame: null,
+            currentBet: null,
+            selectedProfile: null,
+            profiles: []
+        };
+
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            initEventListeners();
+            updateStats();
+            simulateLiveStats();
+            
+            // Проверяем, есть ли сохраненная сессия
+            const savedUser = localStorage.getItem('leakStarUser');
+            if (savedUser) {
+                try {
+                    state.user = JSON.parse(savedUser);
+                    state.isAuthenticated = true;
+                    showDashboard();
+                    updateUserDisplay();
+                } catch (e) {
+                    console.error('Ошибка загрузки пользователя:', e);
+                }
+            }
+        });
+
+        // Инициализация обработчиков событий
+        function initEventListeners() {
+            // Кнопки навигации
+            document.getElementById('registerBtn').addEventListener('click', showRegisterModal);
+            document.getElementById('userProfileBtn').addEventListener('click', function() {
+                if (state.isAuthenticated) {
+                    showDashboard();
+                } else {
+                    showLoginModal();
+                }
+            });
+            
+            // Кнопки игр
+            document.querySelectorAll('.play-button').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (!state.isAuthenticated) {
+                        showLoginModal();
+                        return;
+                    }
+                    const game = this.getAttribute('data-game');
+                    startGame(game);
+                });
+            });
+            
+            // Закрытие модальных окон
+            document.getElementById('closeRegisterModal').addEventListener('click', () => hideModal('registerModal'));
+            document.getElementById('closeLoginModal').addEventListener('click', () => hideModal('loginModal'));
+            document.getElementById('closeCodeModal').addEventListener('click', () => hideModal('codeModal'));
+            document.getElementById('closeWithdrawModal').addEventListener('click', () => hideModal('withdrawModal'));
+            
+            // Кнопки в модальных окнах
+            document.getElementById('submitRegisterBtn').addEventListener('click', processRegistration);
+            document.getElementById('submitLoginBtn').addEventListener('click', processLogin);
+            document.getElementById('submitCodeBtn').addEventListener('click', processCode);
+            document.getElementById('submitWithdrawBtn').addEventListener('click', processWithdrawal);
+            
+            // Поиск профилей
+            document.getElementById('usernameInput').addEventListener('input', debounce(searchProfiles, 300));
+            
+            // Кнопки в дашборде
+            document.getElementById('dailyBonusBtn').addEventListener('click', claimDailyBonus);
+            document.getElementById('withdrawBtn').addEventListener('click', showWithdrawModal);
+            document.getElementById('copyRefBtn').addEventListener('click', copyRefLink);
+            document.getElementById('refreshRef').addEventListener('click', updateRefStats);
+            document.getElementById('refreshStats').addEventListener('click', updateUserStats);
+            
+            // Кнопки в игровом интерфейсе
+            document.getElementById('placeBetBtn').addEventListener('click', placeBet);
+            document.getElementById('backToGamesBtn').addEventListener('click', () => {
+                document.getElementById('gameInterface').classList.remove('active');
+                document.querySelector('.games').scrollIntoView({ behavior: 'smooth' });
+            });
+            document.getElementById('playAgainBtn').addEventListener('click', () => {
+                document.getElementById('gameResult').classList.remove('active');
+                startGame(state.currentGame);
+            });
+            document.getElementById('backToDashboardBtn').addEventListener('click', showDashboard);
+            
+            // Закрытие модальных окон по клику вне контента
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.classList.remove('active');
+                    }
+                });
+            });
+        }
+
+        // Функции работы с модальными окнами
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function hideModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function showRegisterModal() {
+            showModal('registerModal');
+        }
+
+        function showLoginModal() {
+            showModal('loginModal');
+        }
+
+        function showWithdrawModal() {
+            if (!state.isAuthenticated) {
+                showLoginModal();
+                return;
+            }
+            
+            document.getElementById('withdrawBalance').textContent = state.user.balance;
+            document.getElementById('withdrawUsername').value = state.user.username;
+            showModal('withdrawModal');
+        }
+
+        // Поиск профилей Telegram (симуляция)
+        async function searchProfiles(e) {
+            const query = e.target.value.trim().replace('@', '');
+            const resultsContainer = document.getElementById('profileResults');
+            
+            if (query.length < 2) {
+                resultsContainer.innerHTML = '';
+                return;
+            }
+            
+            // Показываем загрузку
+            resultsContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-secondary);"><div class="loading"></div> Поиск профилей...</div>';
+            
+            // Симуляция задержки поиска
+            setTimeout(() => {
+                // Тестовые данные профилей (в реальном приложении здесь был бы запрос к API Telegram)
+                const mockProfiles = [
+                    { id: 1, name: 'Александр Иванов', username: query, avatar: 'АИ' },
+                    { id: 2, name: 'Алексей Смирнов', username: query + 'pro', avatar: 'АС' },
+                    { id: 3, name: 'Анна Петрова', username: query + '_official', avatar: 'АП' },
+                    { id: 4, name: 'Дмитрий Сидоров', username: 'real_' + query, avatar: 'ДС' },
+                    { id: 5, name: 'Мария Кузнецова', username: query + '2024', avatar: 'МК' }
+                ];
+                
+                state.profiles = mockProfiles;
+                
+                if (mockProfiles.length === 0) {
+                    resultsContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-secondary);">Профили не найдены</div>';
+                    return;
+                }
+                
+                let html = '';
+                mockProfiles.forEach((profile, index) => {
+                    html += `
+                        <div class="profile-item ${state.selectedProfile?.id === profile.id ? 'selected' : ''}" 
+                             data-index="${index}" onclick="selectProfile(${index})">
+                            <div class="profile-avatar">${profile.avatar}</div>
+                            <div class="profile-info">
+                                <div class="profile-name">${profile.name}</div>
+                                <div class="profile-username">@${profile.username}</div>
+                            </div>
+                            ${state.selectedProfile?.id === profile.id ? '<i class="fas fa-check profile-check"></i>' : ''}
+                        </div>
+                    `;
+                });
+                
+                resultsContainer.innerHTML = html;
+            }, 800);
+        }
+
+        // Выбор профиля
+        function selectProfile(index) {
+            state.selectedProfile = state.profiles[index];
+            
+            // Обновляем UI
+            document.querySelectorAll('.profile-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            
+            document.querySelector(`.profile-item[data-index="${index}"]`).classList.add('selected');
+            
+            // Добавляем иконку проверки
+            const selectedItem = document.querySelector(`.profile-item[data-index="${index}"]`);
+            if (!selectedItem.querySelector('.profile-check')) {
+                selectedItem.innerHTML += '<i class="fas fa-check profile-check"></i>';
+            }
+            
+            // Обновляем поле ввода
+            document.getElementById('usernameInput').value = `@${state.selectedProfile.username}`;
+        }
+
+        // Обработка регистрации
+        function processRegistration() {
+            const usernameInput = document.getElementById('usernameInput').value.trim();
+            const phoneInput = document.getElementById('phoneInput').value.trim();
+            
+            if (!state.selectedProfile) {
+                alert('Пожалуйста, выберите ваш профиль из списка');
+                return;
+            }
+            
+            if (!phoneInput.match(/^\+7\d{10}$/)) {
+                alert('Пожалуйста, введите корректный номер телефона в формате +79123456789');
+                return;
+            }
+            
+            // Создаем пользователя
+            state.user = {
+                id: Date.now(),
+                name: state.selectedProfile.name,
+                username: state.selectedProfile.username,
+                phone: phoneInput,
+                balance: 100,
+                refs: [],
+                verifiedRefs: [],
+                gamesPlayed: 0,
+                totalWins: 0,
+                regDate: new Date(),
+                lastBonusDate: null,
+                bonusStreak: 0
+            };
+            
+            // Сохраняем в localStorage
+            localStorage.setItem('leakStarUser', JSON.stringify(state.user));
+            
+            // Показываем окно кода
+            hideModal('registerModal');
+            showModal('codeModal');
+            
+            // Автозаполнение кода для демонстрации
+            setTimeout(() => {
+                document.getElementById('code1').value = '1';
+                document.getElementById('code2').value = '2';
+                document.getElementById('code3').value = '3';
+                document.getElementById('code4').value = '4';
+                document.getElementById('code5').value = '5';
+            }, 500);
+        }
+
+        // Обработка входа
+        function processLogin() {
+            const phone = document.getElementById('loginPhone').value.trim();
+            
+            if (!phone.match(/^\+7\d{10}$/)) {
+                alert('Пожалуйста, введите корректный номер телефона');
+                return;
+            }
+            
+            // Для демонстрации создаем тестового пользователя
+            state.user = {
+                id: 123456789,
+                name: 'Тестовый Пользователь',
+                username: 'testuser',
+                phone: phone,
+                balance: 250,
+                refs: [987654321, 876543210],
+                verifiedRefs: [987654321],
+                gamesPlayed: 15,
+                totalWins: 350,
+                regDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 7 дней назад
+                lastBonusDate: new Date().toISOString().split('T')[0],
+                bonusStreak: 3
+            };
+            
+            localStorage.setItem('leakStarUser', JSON.stringify(state.user));
+            
+            hideModal('loginModal');
+            showModal('codeModal');
+        }
+
+        // Обработка кода подтверждения
+        function processCode() {
+            const code1 = document.getElementById('code1').value;
+            const code2 = document.getElementById('code2').value;
+            const code3 = document.getElementById('code3').value;
+            const code4 = document.getElementById('code4').value;
+            const code5 = document.getElementById('code5').value;
+            
+            const code = code1 + code2 + code3 + code4 + code5;
+            
+            if (code.length !== 5) {
+                alert('Пожалуйста, введите полный код из 5 цифр');
+                return;
+            }
+            
+            // В реальном приложении здесь была бы проверка кода через API
+            
+            state.isAuthenticated = true;
+            hideModal('codeModal');
+            
+            // Показываем уведомление об успешной регистрации
+            showNotification('✅ Регистрация успешно завершена! Добро пожаловать в Leak Star!');
+            
+            // Показываем дашборд
+            setTimeout(() => {
+                showDashboard();
+                updateUserDisplay();
+            }, 500);
+        }
+
+        // Показать дашборд
+        function showDashboard() {
+            // Скрываем все секции
+            document.querySelector('.hero').style.display = 'none';
+            document.querySelector('.stats').style.display = 'none';
+            document.querySelector('.games').style.display = 'none';
+            document.querySelector('.dashboard').style.display = 'none';
+            document.getElementById('gameInterface').classList.remove('active');
+            
+            // Показываем дашборд
+            document.querySelector('.dashboard').style.display = 'block';
+            document.querySelector('.dashboard').classList.add('active');
+            
+            // Обновляем данные пользователя
+            updateUserDisplay();
+            updateUserStats();
+            updateRefStats();
+            
+            // Обновляем навигацию
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            document.querySelector('.user-profile .user-name').textContent = state.user.name.split(' ')[0];
+            document.querySelector('.user-profile .user-avatar').textContent = state.user.name.charAt(0);
+        }
+
+        // Обновление отображения пользователя
+        function updateUserDisplay() {
+            if (!state.user) return;
+            
+            document.getElementById('userDisplayName').textContent = state.user.name;
+            document.getElementById('userBalance').textContent = state.user.balance;
+            document.getElementById('gameBalance').textContent = state.user.balance;
+            
+            // Обновляем аватар в навигации
+            const userProfileBtn = document.getElementById('userProfileBtn');
+            userProfileBtn.querySelector('.user-name').textContent = state.user.name.split(' ')[0];
+            userProfileBtn.querySelector('.user-avatar').textContent = state.user.name.charAt(0);
+        }
+
+        // Обновление статистики пользователя
+        function updateUserStats() {
+            if (!state.user) return;
+            
+            const daysInSystem = Math.floor((new Date() - new Date(state.user.regDate)) / (1000 * 60 * 60 * 24));
+            const level = Math.floor(state.user.balance / 100) + 1;
+            
+            document.getElementById('daysInSystem').textContent = daysInSystem;
+            document.getElementById('userGamesPlayed').textContent = state.user.gamesPlayed;
+            document.getElementById('totalWins').textContent = state.user.totalWins + ' ⭐';
+            document.getElementById('userLevel').textContent = level;
+        }
+
+        // Обновление реферальной статистики
+        function updateRefStats() {
+            if (!state.user) return;
+            
+            document.getElementById('totalRefs').textContent = state.user.refs.length;
+            document.getElementById('activeRefs').textContent = state.user.verifiedRefs.length;
+            document.getElementById('earnedFromRefs').textContent = (state.user.verifiedRefs.length * 50) + ' ⭐';
+            
+            // Генерируем реферальную ссылку
+            const refCode = `ref_${state.user.id}_${Date.now()}`;
+            const refLink = `https://t.me/leakstarbot?start=${refCode}`;
+            document.getElementById('refLink').value = refLink;
+        }
+
+        // Копирование реферальной ссылки
+        function copyRefLink() {
+            const refLink = document.getElementById('refLink');
+            refLink.select();
+            refLink.setSelectionRange(0, 99999); // Для мобильных устройств
+            
+            try {
+                navigator.clipboard.writeText(refLink.value);
+                showNotification('✅ Ссылка скопирована в буфер обмена!');
+            } catch (err) {
+                console.error('Ошибка копирования:', err);
+                showNotification('❌ Не удалось скопировать ссылку');
+            }
+        }
+
+        // Получение ежедневного бонуса
+        function claimDailyBonus() {
+            if (!state.user) return;
+            
+            const today = new Date().toISOString().split('T')[0];
+            
+            if (state.user.lastBonusDate === today) {
+                showNotification('❌ Вы уже получали бонус сегодня. Приходите завтра!');
+                return;
+            }
+            
+            // Увеличиваем серию
+            state.user.bonusStreak++;
+            const bonusAmount = Math.min(50 + state.user.bonusStreak * 10, 200);
+            
+            // Начисляем бонус
+            state.user.balance += bonusAmount;
+            state.user.lastBonusDate = today;
+            
+            // Сохраняем
+            localStorage.setItem('leakStarUser', JSON.stringify(state.user));
+            
+            // Обновляем UI
+            updateUserDisplay();
+            updateUserStats();
+            
+            // Показываем уведомление
+            showNotification(`🎁 Ежедневный бонус: +${bonusAmount} ⭐! Серия: ${state.user.bonusStreak} дней`);
+        }
+
+        // Обработка вывода
+        function processWithdrawal() {
+            const amount = parseInt(document.getElementById('withdrawAmount').value);
+            const balance = state.user.balance;
+            
+            if (isNaN(amount) || amount < 100 || amount > 10000) {
+                alert('Сумма должна быть от 100 до 10000 звёзд');
+                return;
+            }
+            
+            if (amount > balance) {
+                alert('Недостаточно звёзд на балансе');
+                return;
+            }
+            
+            // Списание средств
+            state.user.balance -= amount;
+            
+            // Сохранение
+            localStorage.setItem('leakStarUser', JSON.stringify(state.user));
+            
+            // Обновление UI
+            updateUserDisplay();
+            
+            // Закрытие модального окна
+            hideModal('withdrawModal');
+            
+            // Показать уведомление
+            showNotification(`✅ Заявка на вывод ${amount} ⭐ отправлена! Ожидайте обработки в течение 48 часов.`);
+        }
+
+        // Запуск игры
+        function startGame(gameType) {
+            state.currentGame = gameType;
+            
+            // Скрываем все секции
+            document.querySelector('.hero').style.display = 'none';
+            document.querySelector('.stats').style.display = 'none';
+            document.querySelector('.games').style.display = 'none';
+            document.querySelector('.dashboard').style.display = 'none';
+            
+            // Показываем игровой интерфейс
+            document.getElementById('gameInterface').classList.add('active');
+            document.getElementById('gameResult').classList.remove('active');
+            
+            // Устанавливаем заголовок игры
+            const gameNames = {
+                'slots': '🎰 Слоты',
+                'dice': '🎲 Кости',
+                'cards': '🃏 Карты',
+                'basketball': '🏀 Баскетбол'
+            };
+            
+            document.getElementById('gameTitle').textContent = gameNames[gameType];
+            document.getElementById('gameBalance').textContent = state.user.balance;
+            
+            // Создаем варианты ставок
+            const bets = [10, 50, 100, 200, 500, 1000];
+            const betContainer = document.getElementById('betSelection');
+            betContainer.innerHTML = '';
+            
+            bets.forEach(bet => {
+                const betOption = document.createElement('div');
+                betOption.className = 'bet-option';
+                betOption.innerHTML = `
+                    <div class="bet-amount">${bet} ⭐</div>
+                    <div class="bet-label">Ставка</div>
+                `;
+                
+                betOption.addEventListener('click', () => {
+                    document.querySelectorAll('.bet-option').forEach(opt => opt.classList.remove('selected'));
+                    betOption.classList.add('selected');
+                    state.currentBet = bet;
+                });
+                
+                betContainer.appendChild(betOption);
+            });
+            
+            // Автоматически выбираем первую ставку
+            if (betContainer.firstChild) {
+                betContainer.firstChild.click();
+            }
+            
+            // Прокручиваем к игре
+            document.getElementById('gameInterface').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Размещение ставки
+        function placeBet() {
+            if (!state.currentBet) {
+                alert('Пожалуйста, выберите ставку');
+                return;
+            }
+            
+            if (state.currentBet > state.user.balance) {
+                alert('Недостаточно звёзд для этой ставки');
+                return;
+            }
+            
+            // Спишем ставку
+            state.user.balance -= state.currentBet;
+            state.user.gamesPlayed++;
+            
+            // Симуляция игры
+            let winAmount = 0;
+            let resultText = '';
+            let resultClass = '';
+            
+            const winChance = Math.random();
+            
+            if (winChance < 0.4) {
+                // Проигрыш
+                winAmount = 0;
+                resultText = `-${state.currentBet} ⭐`;
+                resultClass = 'result-lose';
+            } else if (winChance < 0.8) {
+                // Маленький выигрыш
+                winAmount = state.currentBet;
+                resultText = `+0 ⭐`;
+                resultClass = '';
+            } else if (winChance < 0.95) {
+                // Средний выигрыш
+                winAmount = state.currentBet * 2;
+                resultText = `+${state.currentBet} ⭐`;
+                resultClass = 'result-win';
+            } else {
+                // Крупный выигрыш
+                winAmount = state.currentBet * 5;
+                resultText = `+${state.currentBet * 4} ⭐`;
+                resultClass = 'result-win';
+            }
+            
+            // Начисляем выигрыш
+            state.user.balance += winAmount;
+            
+            if (winAmount > state.currentBet) {
+                state.user.totalWins += (winAmount - state.currentBet);
+            }
+            
+            // Сохраняем изменения
+            localStorage.setItem('leakStarUser', JSON.stringify(state.user));
+            
+            // Показываем результат
+            document.getElementById('resultTitle').textContent = winAmount > state.currentBet ? '🎉 Вы выиграли!' : '😔 Вы проиграли';
+            document.getElementById('resultTitle').className = `result-title ${resultClass}`;
+            document.getElementById('resultBet').textContent = `${state.currentBet} ⭐`;
+            document.getElementById('resultAmount').textContent = resultText;
+            document.getElementById('resultAmount').className = resultClass;
+            document.getElementById('resultNewBalance').textContent = `${state.user.balance} ⭐`;
+            
+            document.getElementById('gameResult').classList.add('active');
+            
+            // Обновляем баланс в интерфейсе
+            updateUserDisplay();
+            document.getElementById('gameBalance').textContent = state.user.balance;
+            
+            // Прокручиваем к результату
+            document.getElementById('gameResult').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Обновление общей статистики
+        function updateStats() {
+            // Эти данные можно было бы получать с сервера
+            const stats = {
+                totalUsers: 12847,
+                totalStars: 5200000,
+                gamesPlayed: 892000,
+                totalBonuses: 2100000
+            };
+            
+            // Анимация чисел
+            animateNumber('totalUsers', stats.totalUsers);
+            animateNumber('totalStars', stats.totalStars);
+            animateNumber('gamesPlayed', stats.gamesPlayed);
+            animateNumber('totalBonuses', stats.totalBonuses);
+        }
+
+        // Симуляция живых изменений статистики
+        function simulateLiveStats() {
+            setInterval(() => {
+                const increment = Math.floor(Math.random() * 10) + 1;
+                
+                // Обновляем статистику случайным образом
+                const elements = ['totalUsers', 'totalStars', 'gamesPlayed', 'totalBonuses'];
+                const randomElement = elements[Math.floor(Math.random() * elements.length)];
+                const current = parseInt(document.getElementById(randomElement).textContent.replace(/,/g, ''));
+                
+                if (!isNaN(current)) {
+                    const newValue = current + increment;
+                    animateNumber(randomElement, newValue);
+                }
+            }, 5000); // Обновление каждые 5 секунд
+        }
+
+        // Анимация чисел
+        function animateNumber(elementId, target) {
+            const element = document.getElementById(elementId);
+            const current = parseInt(element.textContent.replace(/,/g, '')) || 0;
+            const increment = (target - current) / 30;
+            let currentValue = current;
+            
+            const timer = setInterval(() => {
+                currentValue += increment;
+                
+                if ((increment > 0 && currentValue >= target) || (increment < 0 && currentValue <= target)) {
+                    currentValue = target;
+                    clearInterval(timer);
+                }
+                
+                element.textContent = Math.round(currentValue).toLocaleString();
+            }, 30);
+        }
+
+        // Показать уведомление
+        function showNotification(message) {
+            // Создаем элемент уведомления
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: var(--card-bg);
+                color: var(--text);
+                padding: 15px 25px;
+                border-radius: 15px;
+                border-left: 4px solid var(--primary);
+                box-shadow: var(--shadow);
+                z-index: 10000;
+                animation: fadeIn 0.3s ease-out;
+                max-width: 350px;
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 215, 0, 0.2);
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Удаляем через 5 секунд
+            setTimeout(() => {
+                notification.style.animation = 'fadeIn 0.3s ease-out reverse';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 5000);
+        }
+
+        // Debounce функция для поиска
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Глобальные функции для вызова из HTML
+        window.selectProfile = selectProfile;
+    </script>
+</body>
+</html>
